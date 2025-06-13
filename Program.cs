@@ -44,6 +44,11 @@ namespace testPortfolio
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            app.MapControllerRoute(
+                name : "backOffice",
+                pattern: "{controller=BackOffice}/{action=Index}"
+            );
+
             app.Run();
         }
     }
