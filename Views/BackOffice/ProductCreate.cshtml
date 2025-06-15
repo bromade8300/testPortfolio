@@ -1,0 +1,45 @@
+﻿
+<div class="row ">
+    <!-- Sidebar -->
+    @* <div class="col-md-2">  *@
+    @Html.Partial("_VerticalNav")
+    @* </div> *@
+
+    <!-- Form Content -->
+    <div class=" col-md-4 bg-light p-4">
+        <h1>@ViewData["Title"]</h1>
+
+        <form asp-action="Create" asp-controller="Product" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+
+                <div class="form-floating">
+                <label for="Name">
+                    Nom du produit
+                </label>
+
+                <input type="text" class="form-control" name="Name" id="Name" />
+                </div>
+
+                <label for="Description">
+                    Description
+                </label>
+
+                <input type="text" class="form-control" name="Description" id="Description" />
+            </div>
+
+            <label for="TestImage" class="form-label">
+                Sélectionnez des fichiers .png
+            </label>
+            <input class="form-control" type="file" name="TestImage" id="TestImage">
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="IsPublic" id="IsPublic">
+                <label class="form-check-label" for="IsPublic">Public</label>
+            </div>
+
+            <button type="submit" class=" btn btn-primary mt-2">
+                Envoyer
+            </button>
+        </form>
+    </div>
+</div>

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using testPortfolio.Controllers;
 namespace testPortfolio
 {
     public class Program
@@ -12,12 +13,20 @@ namespace testPortfolio
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options
+            .UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+            .EnableSensitiveDataLogging()
+            .LogTo(Console.WriteLine, LogLevel.Information)
+            );
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
-
+            
+            builder.Services.AddScoped<ProductController>();
+            builder.Services.AddScoped<BackOffice>();
+            builder.Services.AddScoped<PictureController>();
+            builder.Services.AddSingleton<HomeController>();
 
             var app = builder.Build();
             app.MapRazorPages();

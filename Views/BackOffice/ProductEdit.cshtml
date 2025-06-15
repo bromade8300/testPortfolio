@@ -1,0 +1,15 @@
+﻿@Model testportfolio.Models.Product
+
+@{
+    ViewData["Title"] = "Gestion Des Produits";
+}
+
+@Html.Partial("_VerticalNav")
+<h1>@ViewData["Title"]</h1>
+
+
+<div>
+    <p>Product Name : @Model.Name</p>
+    <p>Product Price : @Model.Price</p>
+    <p>Product Description : @Model.Description</p>
+</div>
