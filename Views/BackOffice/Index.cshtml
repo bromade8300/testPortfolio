@@ -1,4 +1,4 @@
-﻿@* @model List<testPortfolio.Models.Product> *@
+﻿@model List<testPortfolio.Models.Product>
 
 @{
     ViewData["Title"] = "Index";
@@ -6,3 +6,18 @@
 
 @Html.Partial("_VerticalNav")
 <h1>Index</h1>
+
+
+@{
+    @foreach (var card in Model)
+    {
+        <div class="mb-3">
+            @Html.Partial("_Card", new testPortfolio.Models.Card
+   {
+       name = card.name,
+       description = card.description,
+       imagePath = card.images != null && card.images.Any() ? card.images.First().path : "/uploads/default.jpg" // chemin d’image par défaut
+   })
+        </div>
+    }
+}

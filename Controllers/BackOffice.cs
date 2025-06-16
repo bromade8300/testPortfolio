@@ -15,10 +15,10 @@ namespace testPortfolio.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-           //var items = await _productController.GetAllAsync();
+            var products = await _productController.GetAllAsync();
 
 
-            return View();
+            return View(products);
         }
 
         public async Task<IActionResult> ProductCreate()

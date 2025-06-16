@@ -7,12 +7,12 @@ namespace testPortfolio.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string? Description { get; set; } = string.Empty;
-        public string? Price { get; set; } = "0.00";
+        public string name { get; set; } = string.Empty;
+        public string? description { get; set; } = string.Empty;
+        public string? price { get; set; } = "0.00";
 
-        public List<Picture>? Images { get; set; }
-        public DateTime DateAdded { get; set; } = DateTime.Now;
-        public bool IsPublic { get; set; } = true;
+        public List<Picture>? images { get; set; }
+        public DateTime dateAdded { get; set; } = DateTime.Now;
+        public bool isPublic { get; set; } = true;
     }
 }

@@ -28,7 +28,7 @@ bin/
 obj/
 TestResults/
 .vscode/
-wwwroot/img/
+wwwroot/uploads/
 ###################
 # Web publish log #
 ###################
