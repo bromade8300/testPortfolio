@@ -1,3 +1,120 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<testPortfolio.Models.Product>
+@{
+    ViewData["Title"] = "ArkaWeb";
 }
+
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        font-family: 'Montserrat', Arial, sans-serif;
+        background: linear-gradient(135deg, #e3e9f7 0%, #f5f6fa 60%, #dbeafe 100%);
+        min-height: 100vh;
+    }
+    .portfolio-header {
+        text-align: center;
+        padding: 2rem 0 1rem 0;
+    }
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        max-width: 1100px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    .carousel,
+    .carousel-inner,
+    .carousel-item,
+    .carousel img {
+        border-radius: 18px;
+        box-shadow: 0 6px 32px rgba(30, 58, 138, 0.10);
+    }
+    .associates-section {
+        background: rgba(255,255,255,0.7);
+        border-radius: 18px;
+        box-shadow: 0 2px 16px rgba(30, 58, 138, 0.07);
+        max-width: 900px;
+        margin: 0 auto 2rem auto;
+        padding: 2rem 1rem;
+    }
+    .associates-section .card img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+
+<div class="portfolio-header text-center mb-5">
+    <h1>@ViewData["Title"]</h1>
+    <p>Deux Développeurs passionnés par la création d’applications web modernes, performantes et élégantes</p>
+</div>
+
+<!-- Carousel Section -->
+<div id="portfolioCarousel" class="carousel slide mb-5 shadow rounded" data-bs-ride="carousel" style="max-width:900px;margin:auto;">
+    <div class="carousel-inner">
+        @{
+            var first = true;
+            foreach (var product in Model)
+            {
+                if (product.images != null && product.images.Any())
+                {
+                    foreach (var img in product.images)
+                    {
+                        <div class="carousel-item @(first ? "active" : "")">
+                            <img src="@img.path" class="d-block w-100" style="max-height:420px;object-fit:cover;border-radius:12px;" alt="@product.name">
+                            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2 mb-3">
+                                <h5 class="fw-bold">@product.name</h5>
+                                <p class="mb-0">@product.description</p>
+                            </div>
+                        </div>
+                        first = false;
+                    }
+                }
+            }
+        }
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#portfolioCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Précédent</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#portfolioCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Suivant</span>
+    </button>
+</div>
+
+<!-- Section associés -->
+<section class="associates-section text-center mb-5">
+    <h2 class="fw-bold mb-4">Les associés</h2>
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-4 mb-3">
+            <div class="card p-4 h-100 shadow-sm border-0">
+                <img src="/img/1007429.jpg" class="rounded-circle mb-3 border" style="width:120px;height:120px;object-fit:cover;" alt="Photo Associé 1">
+                <h4 class="fw-bold">Antoine Blanquaert</h4>
+                <p class="text-muted mb-1">Développeur Fullstack</p>
+                <a href="https://www.linkedin.com/in/antoine-blanquaert-b5028a231" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
+                    <i class="bi bi-linkedin"></i> LinkedIn
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card p-4 h-100 shadow-sm border-0">
+                <img src="/img/2d2417ea-6c89-4960-a72f-a658c85f3d63.png" class="rounded-circle mb-3 border" style="width:120px;height:120px;object-fit:cover;" alt="Photo Associé 2">
+                <h4 class="fw-bold">Theo Morneau</h4>
+                <p class="text-muted mb-1">Développeur Frontend</p>
+                <a href="https://www.linkedin.com/in/th%C3%A9o-morneau-700253265/" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
+                    <i class="bi bi-linkedin"></i> LinkedIn
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Produits (cards) -->
+<div class="projects-grid">
+    @* @foreach (var product in Model)
+    {
+        <partial name="_Card" model="new testPortfolio.Models.Card { name = product.name, description = product.description, imagePath = product.images != null && product.images.Any() ? product.images.First().path : "/img/default.jpg" }" />
+    } *@
+</div>

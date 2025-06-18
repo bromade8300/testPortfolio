@@ -7,7 +7,7 @@
 
 /* General Styles */
 body {
-    font-family: sans-serif;
+    font-family: "Open Sans", sans-serif;
     line-height: 1.6;
     background-color: #f4f4f4;
     color: #333;
@@ -45,6 +45,7 @@ body.page-loaded {
 
 #product .product-grid {
     display: flex;
+    padding-top: 0.5rem;
     flex-wrap: nowrap;
     overflow-x: hidden;
     gap: 2rem;
@@ -66,10 +67,10 @@ body.page-loaded {
     margin: 0 auto;
     opacity: 0;
     transform: translateY(40px);
-    transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), 
-                transform 0.7s cubic-bezier(0.4,0,0.2,1),
-                box-shadow 0.3s ease,
-                transform 0.3s ease;
+    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
     scroll-snap-align: start;
     cursor: pointer;
 }
@@ -124,7 +125,7 @@ body.page-loaded {
     border: 1px solid #e0e0e0;
     font-size: 0.97rem;
     color: #333;
-    transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s, padding 0.5s;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s, padding 0.5s;
     pointer-events: none;
 }
 
@@ -179,7 +180,7 @@ body.page-loaded {
     top: 50%;
     transform: translateY(-50%);
     z-index: 30;
-    background: rgba(67,86,231,0.85);
+    background: rgba(67, 86, 231, 0.85);
     color: #fff;
     border: none;
     border-radius: 50%;
@@ -187,7 +188,7 @@ body.page-loaded {
     height: 44px;
     font-size: 1.7rem;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     transition: background 0.2s, transform 0.3s;
     display: flex;
     align-items: center;
@@ -220,7 +221,7 @@ body.page-loaded {
     background: white;
     padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow-x: auto;
 }
 
@@ -229,7 +230,7 @@ body.page-loaded {
     height: 60px;
     object-fit: cover;
     border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .table {
@@ -250,6 +251,7 @@ body.page-loaded {
 }
 
 .btn-group {
+    color: black;
     display: flex;
     gap: 0.5rem;
 }
@@ -292,7 +294,7 @@ body.page-loaded {
 /* Styles pour le modal de confirmation */
 .modal-content {
     border-radius: 8px;
-    box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
 }
 
 .modal-header {
@@ -304,18 +306,23 @@ body.page-loaded {
     padding: 1.5rem;
 }
 
-.modal-footer {
+/* .modal-footer {
     border-top: 1px solid #dee2e6;
     padding: 1rem 1.5rem;
     display: flex;
     gap: 0.5rem;
-}
+} */
 
 /* Media queries */
 @media (max-width: 700px) {
-    #product .product-scroll-arrow.left { left: 0; }
-    #product .product-scroll-arrow.right { right: 0; }
-    
+    #product .product-scroll-arrow.left {
+        left: 0;
+    }
+
+    #product .product-scroll-arrow.right {
+        right: 0;
+    }
+
     .page-container {
         flex-direction: column;
     }

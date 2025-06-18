@@ -1,0 +1,65 @@
+@model List<testPortfolio.Models.Product>
+@{
+    ViewData["Title"] = "Nos Services";
+}
+
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+
+<div class="text-center mb-5">
+    <h1>Nos Services</h1>
+    <p>Découvrez l’ensemble de nos expertises et prestations à travers nos réalisations.</p>
+</div>
+
+<section class="container mb-5">
+    <h2 class="fw-bold mb-4">Les Valeurs que nous pronons</h2>
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="p-4 bg-white rounded shadow-sm h-100">
+                <h4 class="fw-bold mb-2">Développement sur-mesure</h4>
+                <p>Applications web, sites vitrines, plateformes métier : nous concevons des solutions adaptées à vos besoins, performantes et évolutives.  
+                    Notamment à travers des solutions de gestion de contenu, et bien plus encore</p>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="p-4 bg-white rounded shadow-sm h-100">
+                <h4 class="fw-bold mb-2">Expérience Utilisateur</h4>
+                <p>Nous souhaitons s'adapter au mieux à vos idées pour réaliser une application qui vous convient dans votre budget"</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="p-4 bg-white rounded shadow-sm h-100">
+                <h4 class="fw-bold mb-2">Maintenance & Accompagnement</h4>
+                <p>Prototypage, formation, assistance sont pour nous les clés du bon déroulement d'un projet avec nos partenaires</p>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="p-4 bg-white rounded shadow-sm h-100">
+                <h4 class="fw-bold mb-2">Un véritable Produit Web</h4>
+                <p>Nous entendons souvent l'expression du "site vitrine", cependant nous pensons faire bien plus que cela, nous sommes en mesure de s'interfacer avec vos logiciels de gestion
+                    , ou encore automatiser des tâches répétitives.</p>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="projects-grid mb-5">
+@foreach (var product in Model)
+{
+    var card = new testPortfolio.Models.Card
+    {
+        name = product.name,
+        description = product.description,
+        imagePath = (product.images != null && product.images.Any() 
+                     ? product.images.First().path 
+                     : "/img/default.jpg"),
+        secondaryImagePath = (product.images != null && product.images.Count > 1 
+                              ? product.images[1].path 
+                              : null)
+    };
+    <partial name="_Card" model="card" />
+}
+
+</div>
