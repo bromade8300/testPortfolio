@@ -1,10 +1,26 @@
 ﻿@model testPortfolio.Models.Card
+@{
+    int cardId = Model.GetHashCode();
+}
 
-<div class="card" style="width: 18rem;">
-    <img src="@Model.imagePath" class="card-img-top" alt="not found">
-    <div class="card-body">
-        <h5 class="card-title">@Model.name</h5>
-        <p class="card-text">@Model.description</p>
-        <a href="#" class="btn btn-primary">Voir le produit</a>
+<div class="card" data-card-id="@cardId">
+    <div class="card-carousel-container">
+        <div class="card-carousel">
+            <img src="@Model.imagePath" alt="@Model.name">
+            @if (!string.IsNullOrEmpty(Model.secondaryImagePath))
+            {
+                <img src="@Model.secondaryImagePath" alt="@Model.name - Vue alternative">
+            }
+        </div>
+        @if (!string.IsNullOrEmpty(Model.secondaryImagePath))
+        {
+            <button class="card-carousel-button prev">&#8249;</button>
+            <button class="card-carousel-button next">&#8250;</button>
+        }
     </div>
+    
+    <h3>@Model.name</h3>
+    @* <p>@Model.shortDescription</p> *@
+    <button  class="dropdown-toggle" data-card-id="@cardId">Voir plus</button>
+    <div class="big-desc" data-card-id="@cardId">@Model.description</div>
 </div>

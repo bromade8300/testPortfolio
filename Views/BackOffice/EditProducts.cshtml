@@ -1,0 +1,137 @@
+@model List<testPortfolio.Models.Product>
+
+@{
+    ViewData["Title"] = "Gérer les Produits";
+}
+
+<div class="page-container">
+    <div class="vertical-nav">
+        <partial name="_VerticalNav" />
+    </div>
+
+    <div class="main-content">
+        <div class="header-actions">
+            <h1>Gérer les Produits</h1>
+            <a href="@Url.Action("ProductCreate", "BackOffice")" class="btn btn-primary">
+                <i class="text-black fas fa-plus"></i> Nouveau Produit
+            </a>
+        </div>
+
+        <div class="products-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@(product.images?.FirstOrDefault()?.path ?? "/uploads/default.jpg")" 
+                                     alt="@product.name" 
+                                     class="product-thumbnail" />
+                            </td>
+                            <td>@product.name</td>
+                            <td>@(product.description?.Length > 100 ? product.description.Substring(0, 97) + "..." : product.description)</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="@Url.Action("ProductEdit", "BackOffice", new { id = product.Id })" 
+                                       class="btn btn-sm">
+                                        <i class=" fas fa-edit"></i> Modifier
+                                    </a>
+                                    <button type="button" 
+                                            class="btn btn-sm btn-danger delete-product" 
+                                            data-product-id="@product.Id"
+                                            data-product-name="@product.name">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmer la suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer le produit <span id="productNameToDelete"></span> ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form id="deleteProductForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .products-table {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .product-thumbnail {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .btn-group {
+            gap: 0.5rem;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            const deleteForm = document.getElementById('deleteProductForm');
+            const productNameSpan = document.getElementById('productNameToDelete');
+
+            document.querySelectorAll('.delete-product').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.dataset.productId;
+                    const productName = this.dataset.productName;
+                    
+                    deleteForm.action = '@Url.Action("DeleteProduct", "BackOffice")/' + productId;
+                    productNameSpan.textContent = productName;
+                    deleteModal.show();
+                });
+            });
+        });
+    </script>
+}

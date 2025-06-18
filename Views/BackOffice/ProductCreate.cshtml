@@ -1,52 +1,92 @@
-﻿
-<div class="row ">
-    <!-- Sidebar -->
-    @* <div class="col-md-2">  *@
-    @Html.Partial("_VerticalNav")
-    @* </div> *@
+﻿@model testPortfolio.Models.Product
 
-    <!-- Form Content -->
-    <div class=" col-md-4 bg-light p-4">
-        <h1>@ViewData["Title"]</h1>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Navbar verticale -->
+        <div class="col-auto p-0">
+            <partial name="_VerticalNav" />
+        </div>
 
-        <form asp-action="Create" asp-controller="Product" method="post" enctype="multipart/form-data">
-            <div class="form-group">
+        <!-- Contenu principal -->
+        <div class="col">
+            <div class="mt-4">
+                <h2 class="text-center bg-primary text-white py-3 mb-4">Nouveau produit</h2>
 
-                <div class="form-floating">
-                <label for="Name">
-                    Nom du produit
-                </label>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <form asp-action="Create" asp-controller="Product" method="post" enctype="multipart/form-data">
+                            <!-- Informations de base -->
+                            <h5 class="text-dark">Informations de base</h5>
+                            
+                            <div class="mb-3">
+                                <label asp-for="name" class="form-label">Nom du produit</label>
+                                <input asp-for="name" class="form-control" required />
+                            </div>
 
-                <input type="text" class="form-control" name="Name" id="Name" />
+                            <div class="mb-3">
+                                <label asp-for="description" class="form-label">Description</label>
+                                <textarea asp-for="description" class="form-control" rows="3" required></textarea>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="price" class="form-label">Prix (€)</label>
+                                <div class="input-group">
+                                    <input asp-for="price" class="form-control" required />
+                                    <span class="input-group-text">€</span>
+                                </div>
+                            </div>
+
+                            <!-- Images -->
+                            <h5 class="text-dark mb-2">Images</h5>
+                            <div class="mb-4">
+                                <label class="form-label">Sélectionnez des images</label>
+                                <input type="file" 
+                                       class="form-control" 
+                                       name="images" 
+                                       multiple 
+                                       accept="image/*" 
+                                       required />
+                                <div id="selectedFiles" class="mt-2">
+                                    <!-- Les fichiers sélectionnés seront affichés ici -->
+                                </div>
+                            </div>
+
+                            <!-- Options de publication -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check form-switch">
+                                    <input asp-for="isPublic" class="form-check-input" />
+                                    <label asp-for="isPublic" class="form-check-label">Rendre public</label>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a asp-action="Index" class="btn btn-outline-secondary">Annuler</a>
+                                <button type="submit" class="btn btn-primary">Créer</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
-                <label for="Description">
-                    Description
-                </label>
-
-                <input type="text" class="form-control" name="Description" id="Description" />
             </div>
-
-            <label for="images" class="form-label">
-                Sélectionnez des fichiers .png
-            </label>
-            <input class="form-control" type="file" name="images" id="images" accept=".png">
-
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="IsPublic" id="IsPublic">
-                <label class="form-check-label" for="IsPublic">Public</label>
-            </div>
-
-            <button type="submit" class=" btn btn-primary mt-2">
-                Envoyer
-            </button>
-        </form>
-
-
-
+        </div>
     </div>
 </div>
 
-<script>
-
-</script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+            const selectedFiles = document.getElementById('selectedFiles');
+            selectedFiles.innerHTML = '';
+            
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'alert alert-info mb-1 d-flex justify-content-between align-items-center';
+                fileDiv.innerHTML = `
+                    <span>${file.name}</span>
+                `;
+                selectedFiles.appendChild(fileDiv);
+            });
+        });
+    </script>
+}

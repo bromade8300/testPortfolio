@@ -4,20 +4,66 @@
     ViewData["Title"] = "Index";
 }
 
-@Html.Partial("_VerticalNav")
-<h1>Index</h1>
+<div class="page-container">
+    <div class="vertical-nav">
+        <partial name="_VerticalNav" />
+    </div>
 
+    <div class="main-content">
+        <h1>Produits</h1>
 
-@{
-    @foreach (var card in Model)
-    {
-        <div class="mb-3">
-            @Html.Partial("_Card", new testPortfolio.Models.Card
-   {
-       name = card.name,
-       description = card.description,
-       imagePath = card.images != null && card.images.Any() ? card.images.First().path : "/uploads/default.jpg" // chemin d’image par défaut
-   })
-        </div>
-    }
+        <section id="product" class="view">
+            <div class="product-grid">
+                <button class="product-scroll-arrow left" aria-label="Précédent">
+                    <span aria-hidden="true">&#8249;</span>
+                </button>
+                <button class="product-scroll-arrow right" aria-label="Suivant">
+                    <span aria-hidden="true">&#8250;</span>
+                </button>
+
+                @foreach (var card in Model)
+                {
+                    var cardModel = new testPortfolio.Models.Card
+                    {
+                        name = card.name,
+                        description = card.description,
+                        shortDescription = card.description?.Length > 100 ? card.description.Substring(0, 97) + "..." : card.description,
+                        imagePath = card.images != null && card.images.Any() ? card.images.First().path : "/uploads/default.jpg",
+                        secondaryImagePath = card.images != null && card.images.Count() > 1 ? card.images.Skip(1).First().path : null
+                    };
+                    <partial name="_Card" model="cardModel" />
+                }
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const grid = document.querySelector('.product-grid');
+            const leftBtn = document.querySelector('.product-scroll-arrow.left');
+            const rightBtn = document.querySelector('.product-scroll-arrow.right');
+
+            // Vérifier s'il y a besoin de navigation
+            function checkScroll() {
+                const showButtons = grid.scrollWidth > grid.clientWidth;
+                leftBtn.style.display = showButtons ? 'flex' : 'none';
+                rightBtn.style.display = showButtons ? 'flex' : 'none';
+            }
+
+            if (leftBtn && rightBtn && grid) {
+                leftBtn.addEventListener('click', function() {
+                    grid.scrollBy({ left: -360, behavior: 'smooth' });
+                });
+                rightBtn.addEventListener('click', function() {
+                    grid.scrollBy({ left: 360, behavior: 'smooth' });
+                });
+
+                // Vérifier au chargement et au redimensionnement
+                window.addEventListener('resize', checkScroll);
+                checkScroll();
+            }
+        });
+    </script>
 }
