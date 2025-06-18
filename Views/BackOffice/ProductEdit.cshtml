@@ -16,6 +16,7 @@
                     <div class="col-md-8">
                         <form asp-action="Update" asp-controller="Product" method="post" enctype="multipart/form-data">
                             <input type="hidden" asp-for="Id" />
+                            @Html.AntiForgeryToken()
                             
                             <!-- Informations de base -->
                             <h5 class="text-dark">Informations de base</h5>
@@ -46,7 +47,7 @@
                                     {
                                         @foreach (var image in Model.images)
                                         {
-                                            <div class="col-auto position-relative">
+                                            <div class="col-auto position-relative" data-image-id="@image.Id">
                                                 <img src="@image.path" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: cover;" />
                                                 <button type="button" 
                                                         class="btn-close position-absolute top-0 end-0 bg-danger rounded-circle p-2"
@@ -113,18 +114,32 @@
 
         function deleteImage(imageId) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
+                // Récupérer le token anti-falsification
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                
                 fetch(`/Product/DeleteImage/${imageId}`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
                     }
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.reload();
+                        // Trouver et supprimer l'élément image du DOM
+                        const imageElement = document.querySelector(`[data-image-id="${imageId}"]`);
+                        if (imageElement) {
+                            imageElement.remove();
+                        } else {
+                            window.location.reload();
+                        }
                     } else {
                         alert('Une erreur est survenue lors de la suppression de l\'image');
                     }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors de la suppression de l\'image');
                 });
             }
         }
