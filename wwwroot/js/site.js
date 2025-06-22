@@ -21,8 +21,12 @@ window.addEventListener('DOMContentLoaded', function() {
         const prevBtn = card.querySelector('.card-carousel-button.prev');
         const nextBtn = card.querySelector('.card-carousel-button.next');
 
+        // Fix: set width of carousel to number of images * 100%
+        carousel.style.width = (images.length * 100) + '%';
+        images.forEach(img => img.style.width = (100 / images.length) + '%');
+
         function updateCarousel() {
-            carousel.style.transform = `translateX(-${current * 100}%)`;
+            carousel.style.transform = `translateX(-${current * (100 / images.length)}%)`;
         }
         if (prevBtn && nextBtn) {
             prevBtn.addEventListener('click', function() {
@@ -34,6 +38,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 updateCarousel();
             });
         }
+        // Init
+        updateCarousel();
     });
 
     // Navigation horizontale des cartes

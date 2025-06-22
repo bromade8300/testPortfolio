@@ -3,8 +3,92 @@
     int cardId = Model.GetHashCode();
 }
 
+<style>
+.card[data-card-id] {
+    border: 2.5px solid #2563eb;
+    border-radius: 18px;
+    /* Même style que les cartes associés */
+    box-shadow: 0 2px 12px rgba(30, 58, 138, 0.06);
+    transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s;
+    background: #f8fafc;
+}
+.card[data-card-id]:hover {
+    border-color: #1e40af;
+    box-shadow: 0 10px 32px rgba(30, 58, 138, 0.13);
+    transform: translateY(-4px) scale(1.02);
+}
+.card-carousel {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(.77,0,.18,1);
+    will-change: transform;
+    width: 100%;
+    position: relative;
+}
+.card-carousel img {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 320px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.card-carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    min-height: 180px;
+}
+.card-carousel-button.prev, .card-carousel-button.next {
+    position: absolute !important;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background: rgba(255,255,255,0.7);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.10);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.card-carousel-button.prev { left: 8px; }
+.card-carousel-button.next { right: 8px; }
+.card-see-more {
+    display: inline-flex;
+    align-items: center;
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 1rem;
+    background: none;
+    border: none;
+    padding: 0.2rem 0;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+.card-see-more:hover {
+    color: #1e40af;
+    text-decoration: underline;
+}
+.card-see-more .arrow {
+    font-size: 1.1em;
+    margin-left: 0.3em;
+    transition: transform 0.2s;
+}
+.card-see-more[aria-expanded="true"] .arrow {
+    transform: rotate(90deg);
+}
+</style>
+
 <div class="card" data-card-id="@cardId">
-    <div class="card-carousel-container">
+    <div class="card-carousel-container" style="position:relative;">
         <div class="card-carousel">
             <img src="@Model.imagePath" alt="@Model.name">
             @if (!string.IsNullOrEmpty(Model.secondaryImagePath))
@@ -14,13 +98,19 @@
         </div>
         @if (!string.IsNullOrEmpty(Model.secondaryImagePath))
         {
-            <button class="card-carousel-button prev">&#8249;</button>
-            <button class="card-carousel-button next">&#8250;</button>
+            <button class="card-carousel-button prev" style="position:absolute;top:50%;left:8px;transform:translateY(-50%);z-index:2;background:rgba(255,255,255,0.7);border:none;border-radius:50%;width:32px;height:32px;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(30,58,138,0.10);cursor:pointer;transition:background 0.15s;">
+                &#8249;
+            </button>
+            <button class="card-carousel-button next" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);z-index:2;background:rgba(255,255,255,0.7);border:none;border-radius:50%;width:32px;height:32px;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(30,58,138,0.10);cursor:pointer;transition:background 0.15s;">
+                &#8250;
+            </button>
         }
     </div>
     
     <h3>@Model.name</h3>
     @* <p>@Model.shortDescription</p> *@
-    <button  class="dropdown-toggle" data-card-id="@cardId">Voir plus</button>
+    <button class="card-see-more dropdown-toggle" data-card-id="@cardId" aria-expanded="false" style="background:none;">
+        Voir plus 
+    </button>
     <div class="big-desc" data-card-id="@cardId">@Model.description</div>
 </div>

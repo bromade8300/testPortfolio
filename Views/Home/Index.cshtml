@@ -217,6 +217,24 @@
             </div>
         </div>
     </div>
+    <button class="btn btn-primary mt-4 text-black" type="button" data-bs-toggle="collapse" data-bs-target="#aboutCollapse" aria-expanded="false" aria-controls="aboutCollapse">
+        En savoir plus sur nous
+    </button>
+    <div class="collapse mt-3" id="aboutCollapse">
+        <div class="card card-body text-start mx-auto" style="max-width:700px;background:#f8fafc;border:1.5px solid #2563eb;">
+            <h5 class="fw-bold mb-2">Notre histoire</h5>
+            <p>
+                Nous sommes deux développeurs passionnés, complémentaires et animés par l'envie de créer des solutions web innovantes et élégantes. Notre expertise couvre le développement fullstack, l'UI/UX, la performance et la sécurité. Nous aimons relever des défis techniques et accompagner nos clients dans la réussite de leurs projets digitaux.
+            </p>
+            <h6 class="fw-bold mt-3 mb-1">Nos valeurs</h6>
+            <ul>
+                <li>Qualité et rigueur dans le code</li>
+                <li>Écoute et accompagnement client</li>
+                <li>Veille technologique permanente</li>
+                <li>Créativité et design moderne</li>
+            </ul>
+        </div>
+    </div>
 </section>
 
 <div class="section-title">Nos Projets</div>
@@ -228,7 +246,7 @@
             <div class="card p-4 h-100">
                 <img src="@(product.images != null && product.images.Any() ? product.images.First().path : "/img/default.jpg")" class="mb-3" style="width:100%;height:180px;object-fit:cover;border-radius:10px;" alt="@product.name">
                 <div class="card-title">@product.name</div>
-                <div class="card-text">@product.description</div>
+                @* <div class="card-text">@product.description</div> *@
             </div>
         }
     </div>
