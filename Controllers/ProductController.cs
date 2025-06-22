@@ -75,7 +75,7 @@ namespace testPortfolio.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), "BackOffice");
         }
 
 
@@ -89,6 +89,17 @@ namespace testPortfolio.Controllers
                 .ToListAsync();
             return products;
         }
+
+        public async Task<List<Product>> GetAllPublicAsync()
+        {
+            var products = await _context.Products
+                .Where(p => p.isPublic)
+                .OrderByDescending(p => p.dateAdded)
+                .Include(p => p.images)
+                .ToListAsync();
+            return products;
+        }
+
 
         public async Task<Product?> GetByIdAsync(int id)
         {

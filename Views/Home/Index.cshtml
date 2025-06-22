@@ -8,50 +8,158 @@
 <style>
     body {
         font-family: 'Montserrat', Arial, sans-serif;
-        background: linear-gradient(135deg, #e3e9f7 0%, #f5f6fa 60%, #dbeafe 100%);
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
         min-height: 100vh;
+        margin: 0;
     }
     .portfolio-header {
         text-align: center;
-        padding: 2rem 0 1rem 0;
+        padding: 3.5rem 0 2rem 0;
+        letter-spacing: 0.5px;
+        max-width: 900px;
+        margin: 0 auto;
     }
-    .projects-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 2rem;
-        max-width: 1100px;
-        margin: 2rem auto;
-        padding: 0 1rem;
+    .portfolio-header h1 {
+        font-size: 3.2rem;
+        font-weight: 800;
+        margin-bottom: 0.7rem;
+        color: #1e293b;
+        letter-spacing: 1px;
+    }
+    .portfolio-header p {
+        color: #64748b;
+        font-size: 1.35rem;
+        margin-bottom: 0.5rem;
+    }
+    .portfolio-header .subtitle {
+        font-size: 1.1rem;
+        color: #3b82f6;
+        font-weight: 600;
+        margin-bottom: 0.7rem;
+        letter-spacing: 0.5px;
+    }
+    .section-title {
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 2rem;
+        letter-spacing: 0.5px;
     }
     .carousel,
     .carousel-inner,
     .carousel-item,
     .carousel img {
-        border-radius: 18px;
-        box-shadow: 0 6px 32px rgba(30, 58, 138, 0.10);
+        border-radius: 22px;
+        box-shadow: 0 8px 36px rgba(30, 58, 138, 0.13);
+    }
+    .carousel {
+        max-width: 1200px !important;
+        margin: 0 auto 3rem auto !important;
+    }
+    .carousel-caption {
+        background: rgba(255,255,255,0.92);
+        color: #1e293b;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(30, 58, 138, 0.07);
+        padding: 1.2rem 1.5rem;
+    }
+    .carousel-caption h5 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2563eb;
+    }
+    .carousel-caption p {
+        font-size: 1.08rem;
+        color: #334155;
     }
     .associates-section {
-        background: rgba(255,255,255,0.7);
-        border-radius: 18px;
-        box-shadow: 0 2px 16px rgba(30, 58, 138, 0.07);
-        max-width: 900px;
-        margin: 0 auto 2rem auto;
-        padding: 2rem 1rem;
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 2px 24px rgba(30, 58, 138, 0.08);
+        max-width: 1200px;
+        margin: 0 auto 3rem auto;
+        padding: 3rem 2rem 2.5rem 2rem;
+    }
+    .associates-section .card {
+        background: #f8fafc;
+        border-radius: 16px;
+        border: 2.5px solid #2563eb;
+        /* Couleur bleue moderne, épaisseur visible */
+        box-shadow: 0 2px 12px rgba(30, 58, 138, 0.06);
+        transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .associates-section .card:hover {
+        transform: translateY(-6px) scale(1.04);
+        box-shadow: 0 10px 32px rgba(30, 58, 138, 0.13);
+        border-color: #1e40af;
+        /* Accentue la bordure au survol */
     }
     .associates-section .card img {
         display: block;
         margin-left: auto;
         margin-right: auto;
+        border: 3px solid #e0e7ef;
+    }
+    .associates-section .fw-bold {
+        color: #1e293b;
+    }
+    .associates-section .text-muted {
+        color: #64748b !important;
+    }
+    .btn-outline-primary {
+        border-radius: 20px;
+        padding: 0.3rem 1.2rem;
+        font-size: 0.98rem;
+    }
+    .projects-section {
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 2px 24px rgba(30, 58, 138, 0.08);
+        max-width: 1200px;
+        margin: 0 auto 3rem auto;
+        padding: 3rem 2rem 2.5rem 2rem;
+    }
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0;
+    }
+    .projects-grid .card {
+        transition: box-shadow 0.15s, transform 0.15s;
+        box-shadow: 0 2px 8px rgba(30, 58, 138, 0.04);
+        border-radius: 16px;
+        border: none;
+        background: #f1f5f9;
+    }
+    .projects-grid .card:hover {
+        box-shadow: 0 10px 32px rgba(30, 58, 138, 0.13);
+        transform: translateY(-6px) scale(1.03);
+    }
+    .projects-grid .card-title {
+        color: #2563eb;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .projects-grid .card-text {
+        color: #334155;
+        font-size: 1.05rem;
     }
 </style>
 
 <div class="portfolio-header text-center mb-5">
+    <div class="subtitle">Bienvenue sur notre portfolio</div>
     <h1>@ViewData["Title"]</h1>
-    <p>Deux Développeurs passionnés par la création d’applications web modernes, performantes et élégantes</p>
+    <p>Deux développeurs passionnés par la création d’applications web modernes, performantes et élégantes.</p>
 </div>
 
+<div class="section-title">Nos Réalisations en Images</div>
 <!-- Carousel Section -->
-<div id="portfolioCarousel" class="carousel slide mb-5 shadow rounded" data-bs-ride="carousel" style="max-width:900px;margin:auto;">
+<div id="portfolioCarousel" class="carousel slide mb-5 shadow rounded" data-bs-ride="carousel">
     <div class="carousel-inner">
         @{
             var first = true;
@@ -62,10 +170,10 @@
                     foreach (var img in product.images)
                     {
                         <div class="carousel-item @(first ? "active" : "")">
-                            <img src="@img.path" class="d-block w-100" style="max-height:420px;object-fit:cover;border-radius:12px;" alt="@product.name">
-                            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2 mb-3">
-                                <h5 class="fw-bold">@product.name</h5>
-                                <p class="mb-0">@product.description</p>
+                            <img src="@img.path" class="d-block w-100" style="max-height:480px;object-fit:cover;border-radius:16px;" alt="@product.name">
+                            <div class="carousel-caption d-none d-md-block p-2 mb-3">
+                                <h5 class="fw-bold mb-1">@product.name</h5>
+                                <p class="mb-0" style="font-size:1.08rem;">@product.description</p>
                             </div>
                         </div>
                         first = false;
@@ -84,13 +192,13 @@
     </button>
 </div>
 
+<div class="section-title">Les Associés</div>
 <!-- Section associés -->
 <section class="associates-section text-center mb-5">
-    <h2 class="fw-bold mb-4">Les associés</h2>
     <div class="row justify-content-center mt-4">
         <div class="col-md-4 mb-3">
-            <div class="card p-4 h-100 shadow-sm border-0">
-                <img src="/img/1007429.jpg" class="rounded-circle mb-3 border" style="width:120px;height:120px;object-fit:cover;" alt="Photo Associé 1">
+            <div class="card p-4 h-100">
+                <img src="/img/1007429.jpg" class="rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover;" alt="Photo Associé 1">
                 <h4 class="fw-bold">Antoine Blanquaert</h4>
                 <p class="text-muted mb-1">Développeur Fullstack</p>
                 <a href="https://www.linkedin.com/in/antoine-blanquaert-b5028a231" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
@@ -99,8 +207,8 @@
             </div>
         </div>
         <div class="col-md-4 mb-3">
-            <div class="card p-4 h-100 shadow-sm border-0">
-                <img src="/img/2d2417ea-6c89-4960-a72f-a658c85f3d63.png" class="rounded-circle mb-3 border" style="width:120px;height:120px;object-fit:cover;" alt="Photo Associé 2">
+            <div class="card p-4 h-100">
+                <img src="/img/2d2417ea-6c89-4960-a72f-a658c85f3d63.png" class="rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover;" alt="Photo Associé 2">
                 <h4 class="fw-bold">Theo Morneau</h4>
                 <p class="text-muted mb-1">Développeur Frontend</p>
                 <a href="https://www.linkedin.com/in/th%C3%A9o-morneau-700253265/" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
@@ -111,10 +219,17 @@
     </div>
 </section>
 
+<div class="section-title">Nos Projets</div>
 <!-- Section Produits (cards) -->
-<div class="projects-grid">
-    @* @foreach (var product in Model)
-    {
-        <partial name="_Card" model="new testPortfolio.Models.Card { name = product.name, description = product.description, imagePath = product.images != null && product.images.Any() ? product.images.First().path : "/img/default.jpg" }" />
-    } *@
+<div class="projects-section">
+    <div class="projects-grid">
+        @foreach (var product in Model)
+        {
+            <div class="card p-4 h-100">
+                <img src="@(product.images != null && product.images.Any() ? product.images.First().path : "/img/default.jpg")" class="mb-3" style="width:100%;height:180px;object-fit:cover;border-radius:10px;" alt="@product.name">
+                <div class="card-title">@product.name</div>
+                <div class="card-text">@product.description</div>
+            </div>
+        }
+    </div>
 </div>

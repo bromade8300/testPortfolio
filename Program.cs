@@ -26,7 +26,7 @@ namespace testPortfolio
             builder.Services.AddScoped<ProductController>();
             builder.Services.AddScoped<BackOffice>();
             builder.Services.AddScoped<PictureController>();
-            builder.Services.AddSingleton<HomeController>();
+            builder.Services.AddScoped<HomeController>();
 
             var app = builder.Build();
             app.MapRazorPages();
