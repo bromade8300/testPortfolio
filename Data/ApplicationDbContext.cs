@@ -7,7 +7,4 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
-
-   public DbSet<testPortfolio.Models.Product> Products { get; set; }
-   public DbSet<testPortfolio.Models.Picture> Pictures { get; set; }
 }
