@@ -1,0 +1,31 @@
+@model List<testPortfolio.Models.Product>
+@{
+    ViewData["Title"] = "Modifier les images de l'accueil";
+}
+
+<h1 class="mb-4">Modifier les images de la page d'accueil</h1>
+
+<form asp-action="EditHomeImages" asp-controller="BackOffice" method="post" enctype="multipart/form-data">
+    <div class="row">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var product = Model[i];
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@product.name</h5>
+                        @if (product.images != null && product.images.Any())
+                        {
+                            <img src="@product.images.First().path" alt="@product.name" class="img-fluid mb-2" style="max-height:180px;object-fit:cover;">
+                        }
+                        <div class="mb-2">
+                            <label for="Image_@i" class="form-label">Nouvelle image</label>
+                            <input type="file" class="form-control" name="Images[@i]" id="Image_@i" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Enregistrer les modifications</button>
+</form>

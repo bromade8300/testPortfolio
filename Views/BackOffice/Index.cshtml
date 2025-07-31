@@ -21,17 +21,9 @@
                     <span aria-hidden="true">&#8250;</span>
                 </button>
 
-                @foreach (var card in Model)
+                @foreach (var product in Model)
                 {
-                    var cardModel = new testPortfolio.Models.Card
-                    {
-                        name = card.name,
-                        description = card.description,
-                        shortDescription = card.description?.Length > 100 ? card.description.Substring(0, 97) + "..." : card.description,
-                        imagePath = card.images != null && card.images.Any() ? card.images.First().path : "/uploads/default.jpg",
-                        secondaryImagePath = card.images != null && card.images.Count() > 1 ? card.images.Skip(1).First().path : null
-                    };
-                    <partial name="_Card" model="cardModel" />
+                    <partial name="_Card" model="product"/>
                 }
             </div>
         </section>

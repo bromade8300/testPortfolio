@@ -12,8 +12,7 @@ namespace testPortfolio.Models
 
         public string? description { get; set; }
         public DateTime dateAdded { get; set; } = DateTime.Now;
-        public bool isPublic { get; set; } = true;
+        public bool isPublic { get; set; }
         public int productId { get; set; }
-        Product product { get; set; } = new Product();
     }
 }
