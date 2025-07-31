@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using testPortfolio.Controllers;
+using testPortfolio.Services;
 namespace testPortfolio
 {
     public class Program
@@ -10,6 +11,10 @@ namespace testPortfolio
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.  
+
+            builder.Services.Configure<MongoSettings>(
+            builder.Configuration.GetSection("MongoDbSettings"));
+
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -22,7 +27,9 @@ namespace testPortfolio
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            
+            builder.Services.AddSingleton<ProductService>();
+            builder.Services.AddSingleton<PictureService>();
+
             builder.Services.AddScoped<ProductController>();
             builder.Services.AddScoped<BackOffice>();
             builder.Services.AddScoped<PictureController>();

@@ -2,39 +2,28 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using testPortfolio.Models;
+using testPortfolio.Services;
 
 namespace testPortfolio.Controllers
 {
-    public class ProductController : Controller
+    public class ProductController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
-        public ProductController(ApplicationDbContext context, IWebHostEnvironment environment)
+        private readonly ProductService _productService;
+        private readonly PictureService _pictureService;
+
+        public ProductController(ProductService productService,PictureService pictureService, IWebHostEnvironment environment)
         {
-            _context = context;
+            _productService = productService;
+            _pictureService = pictureService;
             _environment = environment;
-        }
-
-
-        [Route("/insert")]
-        public async Task InsertAsyncDemo()
-        {
-            Product product = new Product();
-            product.description = "fds";
-            product.name = "fds";
-            product.price= "fds";
-            product.isPublic = true;
-            _context.Products.Add(
-                product
-                );
-            await _context.SaveChangesAsync();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Product product, List<IFormFile> images)
-        {   
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+        {
+            var pictures = new List<Picture>();
 
             if (images != null && images.Count > 0)
             {
@@ -42,38 +31,35 @@ namespace testPortfolio.Controllers
                 {
                     if (image.Length > 0)
                     {
-                        
                         var fileName = Path.GetRandomFileName() + Path.GetExtension(image.FileName);
                         var relativePath = "/uploads/" + fileName;
                         var uploadPath = Path.Combine(_environment.WebRootPath, "uploads");
 
                         if (!Directory.Exists(uploadPath))
-                        {
                             Directory.CreateDirectory(uploadPath);
-                        }
 
                         var filePath = Path.Combine(uploadPath, fileName);
 
-                        
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await image.CopyToAsync(stream);
                         }
 
-                      
-                        var productImage = new Picture
+                        pictures.Add(new Picture
                         {
                             path = relativePath,
-                            productId    = product.Id
-                        };
-
-                        _context.Pictures.Add(productImage);
-                        await _context.SaveChangesAsync();
+                            name = image.FileName,
+                            dateAdded = DateTime.UtcNow,
+                            isPublic = true
+                        });
                     }
                 }
-
-                await _context.SaveChangesAsync();
             }
+
+            product.images = pictures;
+            product.dateAdded = DateTime.UtcNow;
+
+            await _productService.CreateAsync(product);
 
             return RedirectToAction(nameof(Index), "BackOffice");
         }
@@ -82,68 +68,51 @@ namespace testPortfolio.Controllers
 
         public async Task<List<Product>> GetAllAsync()
         {
-            var products = await _context.Products
-                //.Where(p => p.IsPublic)
-                .OrderByDescending(p => p.dateAdded)
-                .Include(p => p.images)
-                .ToListAsync();
+            var products = await _productService.GetAllAsync();
             return products;
         }
 
         public async Task<List<Product>> GetAllPublicAsync()
         {
-            var products = await _context.Products
-                .Where(p => p.isPublic)
-                .OrderByDescending(p => p.dateAdded)
-                .Include(p => p.images)
-                .ToListAsync();
+            var products = await _productService.GetAllPublicAsync();
             return products;
         }
 
 
         public async Task<Product?> GetByIdAsync(int id)
         {
-            var product = await _context.Products
-                .Include(p => p.images)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _productService.GetByIdAsync(id);
             return product;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return false;
-            }
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            var result = await _productService.DeleteAsync(id);
             return true;
         }
 
         public async Task UpdateAsync(Product product)
         {
-            _context.Entry(product).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _productService.UpdateAsync(product);
         }
 
         public async Task<Product> CreateAsync(Product product)
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            await _productService.CreateAsync(product);
             return product;
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteImage(int id)
+        public async Task<IActionResult> DeleteImage(int productId,int PictureIndex)
         {
-            var image = await _context.Pictures.FindAsync(id);
-            if (image == null)
+            var product = await _productService.GetByIdAsync(productId);
+            if (product == null)
             {
                 return NotFound();
             }
+
+            var image = product.images.ElementAtOrDefault(PictureIndex);
 
             // Supprimer le fichier physique
             if (!string.IsNullOrEmpty(image.path))
@@ -154,19 +123,17 @@ namespace testPortfolio.Controllers
                     System.IO.File.Delete(filePath);
                 }
             }
-
-            // Supprimer l'entrée de la base de données
-            _context.Pictures.Remove(image);
-            await _context.SaveChangesAsync();
+            product.images.RemoveAt(PictureIndex);
+            await _productService.UpdateAsync(product);
 
             return Ok();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(int id, Product product, List<IFormFile> images)
+        public async Task<IActionResult> Update(int id, Product newProduct, List<IFormFile> images)
         {
-            if (id != product.Id)
+            if (id != newProduct.Id)
             {
                 return BadRequest();
             }
@@ -175,22 +142,20 @@ namespace testPortfolio.Controllers
             {
                 try
                 {
-                    // Mettre à jour les propriétés de base du produit
-                    var existingProduct = await _context.Products
-                        .Include(p => p.images)
-                        .FirstOrDefaultAsync(p => p.Id == id);
+                    //// Mettre à jour les propriétés de base du produit
+                    var existingProduct = await _productService.GetByIdAsync(id);
 
                     if (existingProduct == null)
                     {
                         return NotFound();
                     }
 
-                    existingProduct.name = product.name;
-                    existingProduct.description = product.description;
-                    existingProduct.price = product.price;
-                    existingProduct.isPublic = product.isPublic;
+                    existingProduct.name = newProduct.name;
+                    existingProduct.description = newProduct.description;
+                    existingProduct.price = newProduct.price;
+                    existingProduct.isPublic = newProduct.isPublic;
 
-                    // Gérer les nouvelles images
+                    //// Gérer les nouvelles images
                     if (images != null && images.Count > 0)
                     {
                         foreach (var image in images)
@@ -216,20 +181,18 @@ namespace testPortfolio.Controllers
                                 var productImage = new Picture
                                 {
                                     path = relativePath,
-                                    productId = product.Id
+                                    productId = newProduct.Id
                                 };
-
-                                _context.Pictures.Add(productImage);
+                                existingProduct.images.Add(productImage);
                             }
                         }
                     }
-
-                    await _context.SaveChangesAsync();
+                    await _productService.UpdateAsync(existingProduct);
                     return RedirectToAction(nameof(Index), "BackOffice");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await ProductExists(product.Id))
+                    if (!await ProductExists(newProduct.Id))
                     {
                         return NotFound();
                     }
@@ -244,7 +207,7 @@ namespace testPortfolio.Controllers
 
         private async Task<bool> ProductExists(int id)
         {
-            return await _context.Products.AnyAsync(e => e.Id == id);
+            return await _productService.IsProductExistsAsync(id);
         }
     }
 }

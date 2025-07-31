@@ -8,7 +8,7 @@ namespace testPortfolio.Controllers
     public class BackOffice : Controller
     {
         private readonly ProductController _productController;
-        
+
         public BackOffice(ProductController productController)
         {
             _productController = productController;
@@ -26,7 +26,7 @@ namespace testPortfolio.Controllers
             return View(products);
         }
 
-        public async Task<IActionResult> ProductCreate  ()
+        public async Task<IActionResult> ProductCreate()
         {
             return View();
         }

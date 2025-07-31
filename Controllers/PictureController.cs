@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using testPortfolio.Models;
+using testPortfolio.Services;
 
 namespace testPortfolio.Controllers
 {
     public class PictureController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public PictureController(ApplicationDbContext context)
-            {
-                _context = context;
-            }
+        private readonly PictureService _pictureService;
+        public PictureController(PictureService pictureService)
+        {
+            _pictureService = pictureService;
+        }
 
 
         public async Task InsertAsync(Picture picture)
@@ -23,8 +24,7 @@ namespace testPortfolio.Controllers
                 //    dateAdded = DateTime.Now,
                 //    isPublic = true
                 //};
-            _context.Pictures.Add(picture);
-            await _context.SaveChangesAsync();
+            await _pictureService.CreateAsync(picture);
         }
 
     }
