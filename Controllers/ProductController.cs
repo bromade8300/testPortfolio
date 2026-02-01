@@ -8,19 +8,40 @@ namespace testPortfolio.Controllers
 {
     public class ProductController : ControllerBase
     {
-        //private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
         private readonly ProductService _productService;
         private readonly PictureService _pictureService;
 
-        public ProductController(ProductService productService,PictureService pictureService, IWebHostEnvironment environment)
+        // Whitelist des types MIME autorisés pour les uploads
+        private static readonly string[] AllowedMimeTypes = { "image/jpeg", "image/png", "image/gif", "image/webp" };
+        private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        private const long MaxFileSize = 10 * 1024 * 1024; // 10 MB
+
+        public ProductController(ProductService productService, PictureService pictureService, IWebHostEnvironment environment)
         {
             _productService = productService;
             _pictureService = pictureService;
             _environment = environment;
         }
 
+        private bool IsValidImageFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0 || file.Length > MaxFileSize)
+                return false;
+
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!AllowedExtensions.Contains(extension))
+                return false;
+
+            if (!AllowedMimeTypes.Contains(file.ContentType.ToLowerInvariant()))
+                return false;
+
+            return true;
+        }
+
         [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Product product, List<IFormFile> images)
         {
             var pictures = new List<Picture>();
@@ -29,30 +50,34 @@ namespace testPortfolio.Controllers
             {
                 foreach (var image in images)
                 {
-                    if (image.Length > 0)
+                    if (!IsValidImageFile(image))
                     {
-                        var fileName = Path.GetRandomFileName() + Path.GetExtension(image.FileName);
-                        var relativePath = "/uploads/" + fileName;
-                        var uploadPath = Path.Combine(_environment.WebRootPath, "uploads");
-
-                        if (!Directory.Exists(uploadPath))
-                            Directory.CreateDirectory(uploadPath);
-
-                        var filePath = Path.Combine(uploadPath, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await image.CopyToAsync(stream);
-                        }
-
-                        pictures.Add(new Picture
-                        {
-                            path = relativePath,
-                            name = image.FileName,
-                            dateAdded = DateTime.UtcNow,
-                            isPublic = true
-                        });
+                        ModelState.AddModelError("images", $"Fichier invalide: {image.FileName}. Seuls les fichiers image (JPEG, PNG, GIF, WebP) de moins de 10 MB sont autorisés.");
+                        continue;
                     }
+
+                    var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+                    var relativePath = "/uploads/" + fileName;
+                    var uploadPath = Path.Combine(_environment.WebRootPath, "uploads");
+
+                    if (!Directory.Exists(uploadPath))
+                        Directory.CreateDirectory(uploadPath);
+
+                    var filePath = Path.Combine(uploadPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await image.CopyToAsync(stream);
+                    }
+
+                    pictures.Add(new Picture
+                    {
+                        path = relativePath,
+                        name = image.FileName,
+                        dateAdded = DateTime.UtcNow,
+                        isPublic = true
+                    });
                 }
             }
 
@@ -103,8 +128,9 @@ namespace testPortfolio.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteImage(int productId,int PictureIndex)
+        public async Task<IActionResult> DeleteImage(int productId, int PictureIndex)
         {
             var product = await _productService.GetByIdAsync(productId);
             if (product == null)
@@ -112,13 +138,20 @@ namespace testPortfolio.Controllers
                 return NotFound();
             }
 
-            var image = product.images.ElementAtOrDefault(PictureIndex);
+            var image = product.images?.ElementAtOrDefault(PictureIndex);
+            if (image == null)
+            {
+                return NotFound();
+            }
 
-            // Supprimer le fichier physique
+            // Supprimer le fichier physique avec protection contre Path Traversal
             if (!string.IsNullOrEmpty(image.path))
             {
-                var filePath = Path.Combine(_environment.WebRootPath, image.path.TrimStart('/'));
-                if (System.IO.File.Exists(filePath))
+                var uploadsPath = Path.Combine(_environment.WebRootPath, "uploads");
+                var filePath = Path.GetFullPath(Path.Combine(_environment.WebRootPath, image.path.TrimStart('/')));
+
+                // Vérifier que le chemin résolu est bien dans le dossier uploads (protection Path Traversal)
+                if (filePath.StartsWith(uploadsPath, StringComparison.OrdinalIgnoreCase) && System.IO.File.Exists(filePath))
                 {
                     System.IO.File.Delete(filePath);
                 }
@@ -130,6 +163,7 @@ namespace testPortfolio.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int id, Product newProduct, List<IFormFile> images)
         {
@@ -142,7 +176,6 @@ namespace testPortfolio.Controllers
             {
                 try
                 {
-                    //// Mettre à jour les propriétés de base du produit
                     var existingProduct = await _productService.GetByIdAsync(id);
 
                     if (existingProduct == null)
@@ -155,36 +188,41 @@ namespace testPortfolio.Controllers
                     existingProduct.price = newProduct.price;
                     existingProduct.isPublic = newProduct.isPublic;
 
-                    //// Gérer les nouvelles images
+                    // Gérer les nouvelles images avec validation
                     if (images != null && images.Count > 0)
                     {
                         foreach (var image in images)
                         {
-                            if (image.Length > 0)
+                            if (!IsValidImageFile(image))
                             {
-                                var fileName = Path.GetRandomFileName() + Path.GetExtension(image.FileName);
-                                var relativePath = "/uploads/" + fileName;
-                                var uploadPath = Path.Combine(_environment.WebRootPath, "uploads");
-
-                                if (!Directory.Exists(uploadPath))
-                                {
-                                    Directory.CreateDirectory(uploadPath);
-                                }
-
-                                var filePath = Path.Combine(uploadPath, fileName);
-
-                                using (var stream = new FileStream(filePath, FileMode.Create))
-                                {
-                                    await image.CopyToAsync(stream);
-                                }
-
-                                var productImage = new Picture
-                                {
-                                    path = relativePath,
-                                    productId = newProduct.Id
-                                };
-                                existingProduct.images.Add(productImage);
+                                ModelState.AddModelError("images", $"Fichier invalide: {image.FileName}. Seuls les fichiers image (JPEG, PNG, GIF, WebP) de moins de 10 MB sont autorisés.");
+                                continue;
                             }
+
+                            var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
+                            var fileName = $"{Guid.NewGuid()}{extension}";
+                            var relativePath = "/uploads/" + fileName;
+                            var uploadPath = Path.Combine(_environment.WebRootPath, "uploads");
+
+                            if (!Directory.Exists(uploadPath))
+                            {
+                                Directory.CreateDirectory(uploadPath);
+                            }
+
+                            var filePath = Path.Combine(uploadPath, fileName);
+
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await image.CopyToAsync(stream);
+                            }
+
+                            var productImage = new Picture
+                            {
+                                path = relativePath,
+                                productId = newProduct.Id
+                            };
+                            existingProduct.images ??= new List<Picture>();
+                            existingProduct.images.Add(productImage);
                         }
                     }
                     await _productService.UpdateAsync(existingProduct);

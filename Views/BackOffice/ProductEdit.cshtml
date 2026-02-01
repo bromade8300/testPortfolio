@@ -45,16 +45,18 @@
                                 <div class="row g-2">
                                     @if (Model.images != null && Model.images.Any())
                                     {
+                                        var index = 0;
                                         @foreach (var image in Model.images)
                                         {
-                                            <div class="col-auto position-relative" data-image-id="@image.Id">
+                                            <div class="col-auto position-relative" data-image-index="@index">
                                                 <img src="@image.path" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: cover;" />
-                                                <button type="button" 
+                                                <button type="button"
                                                         class="btn-close position-absolute top-0 end-0 bg-danger rounded-circle p-2"
-                                                        onclick="deleteImage(@image.Id)"
+                                                        onclick="deleteImage(@Model.Id, @index)"
                                                         style="transform: translate(25%, -25%);">
                                                 </button>
                                             </div>
+                                            index++;
                                         }
                                     }
                                 </div>
@@ -100,34 +102,35 @@
         document.querySelector('input[type="file"]').addEventListener('change', function(e) {
             const selectedFiles = document.getElementById('selectedFiles');
             selectedFiles.innerHTML = '';
-            
+
             const files = Array.from(e.target.files);
             files.forEach(file => {
                 const fileDiv = document.createElement('div');
                 fileDiv.className = 'alert alert-info mb-1 d-flex justify-content-between align-items-center';
-                fileDiv.innerHTML = `
-                    <span>${file.name}</span>
-                `;
+                const span = document.createElement('span');
+                span.textContent = file.name; // Protection XSS: utiliser textContent au lieu de innerHTML
+                fileDiv.appendChild(span);
                 selectedFiles.appendChild(fileDiv);
             });
         });
 
-        function deleteImage(imageId) {
+        function deleteImage(productId, pictureIndex) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
-                // Récupérer le token anti-falsification
                 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                
-                fetch(`/Product/DeleteImage/${imageId}`, {
+
+                // Envoyer le token via FormData pour la validation CSRF
+                const formData = new FormData();
+                formData.append('__RequestVerificationToken', token);
+                formData.append('productId', productId);
+                formData.append('PictureIndex', pictureIndex);
+
+                fetch('/Product/DeleteImage', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
-                    }
+                    body: formData
                 })
                 .then(response => {
                     if (response.ok) {
-                        // Trouver et supprimer l'élément image du DOM
-                        const imageElement = document.querySelector(`[data-image-id="${imageId}"]`);
+                        const imageElement = document.querySelector(`[data-image-index="${pictureIndex}"]`);
                         if (imageElement) {
                             imageElement.remove();
                         } else {

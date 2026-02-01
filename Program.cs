@@ -17,12 +17,17 @@ namespace testPortfolio
 
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options
-            .UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
-            .EnableSensitiveDataLogging()
-            .LogTo(Console.WriteLine, LogLevel.Information)
-            );
+            builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            {
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+                // Activer le logging sensible uniquement en développement
+                if (builder.Environment.IsDevelopment())
+                {
+                    options.EnableSensitiveDataLogging();
+                    options.LogTo(Console.WriteLine, LogLevel.Information);
+                }
+            });
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -50,6 +55,7 @@ namespace testPortfolio
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

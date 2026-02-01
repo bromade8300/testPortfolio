@@ -15,6 +15,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-8">
                         <form asp-action="Create" asp-controller="Product" method="post" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
                             <!-- Informations de base -->
                             <h5 class="text-dark">Informations de base</h5>
                             
@@ -77,14 +78,14 @@
         document.querySelector('input[type="file"]').addEventListener('change', function(e) {
             const selectedFiles = document.getElementById('selectedFiles');
             selectedFiles.innerHTML = '';
-            
+
             const files = Array.from(e.target.files);
             files.forEach(file => {
                 const fileDiv = document.createElement('div');
                 fileDiv.className = 'alert alert-info mb-1 d-flex justify-content-between align-items-center';
-                fileDiv.innerHTML = `
-                    <span>${file.name}</span>
-                `;
+                const span = document.createElement('span');
+                span.textContent = file.name; // Protection XSS: utiliser textContent au lieu de innerHTML
+                fileDiv.appendChild(span);
                 selectedFiles.appendChild(fileDiv);
             });
         });
