@@ -32,6 +32,15 @@ namespace testPortfolio.Services
 
         public async Task CreateAsync(Product product)
         {
+            // Générer un ID unique (max + 1) pour éviter les conflits MongoDB
+            var maxId = await _productsCollection
+                .Find(_ => true)
+                .SortByDescending(p => p.Id)
+                .Limit(1)
+                .FirstOrDefaultAsync();
+
+            product.Id = (maxId?.Id ?? 0) + 1;
+
             await _productsCollection.InsertOneAsync(product);
         }
 

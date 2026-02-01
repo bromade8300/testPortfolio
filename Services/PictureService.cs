@@ -27,6 +27,15 @@ namespace testPortfolio.Services
 
         public async Task CreateAsync(Picture picture)
         {
+            // Générer un ID unique (max + 1) pour éviter les conflits MongoDB
+            var maxId = await _picturesCollection
+                .Find(_ => true)
+                .SortByDescending(p => p.Id)
+                .Limit(1)
+                .FirstOrDefaultAsync();
+
+            picture.Id = (maxId?.Id ?? 0) + 1;
+
             await _picturesCollection.InsertOneAsync(picture);
         }
 
