@@ -65,8 +65,43 @@ docker build -t testportfolio .
 - `wwwroot/uploads/` - User-uploaded product images
 - `wwwroot/lib/` - Bootstrap 5, jQuery
 
+**Security Middleware:**
+- `Middleware/SecurityHeadersMiddleware.cs` - Ajoute les headers de sécurité (CSP, X-Frame-Options, etc.)
+
 ## Configuration
 
 - MongoDB settings in `appsettings.json` under `MongoDbSettings`
 - SQLite connection string under `ConnectionStrings.DefaultConnection`
 - Identity requires confirmed email accounts (`RequireConfirmedAccount = true`)
+
+### User Secrets (Développement)
+
+Pour stocker les connexions sensibles en développement :
+
+```bash
+# Initialiser (déjà fait)
+dotnet user-secrets init
+
+# Stocker la connection string MongoDB
+dotnet user-secrets set "MongoDbSettings:ConnectionString" "mongodb://user:password@host:27017"
+
+# Voir les secrets
+dotnet user-secrets list
+```
+
+### Production
+
+En production, utiliser des variables d'environnement :
+
+```bash
+export MongoDbSettings__ConnectionString="mongodb://..."
+export ConnectionStrings__DefaultConnection="Data Source=..."
+```
+
+## Security
+
+- **Authentication** : ASP.NET Identity avec cookies sécurisés (HttpOnly, Secure, SameSite=Strict)
+- **Authorization** : `[Authorize]` sur les endpoints sensibles (BackOffice, ProductController)
+- **CSRF** : `[ValidateAntiForgeryToken]` + `@Html.AntiForgeryToken()` sur tous les formulaires POST
+- **File Upload** : Validation whitelist (JPEG, PNG, GIF, WebP), limite 10 MB
+- **Headers** : CSP, X-Frame-Options, X-Content-Type-Options via middleware

@@ -32,9 +32,10 @@
                     {
                         <tr>
                             <td>
-                                <img src="@(product.images?.FirstOrDefault()?.path ?? "/uploads/default.jpg")" 
-                                     alt="@product.name" 
-                                     class="product-thumbnail" />
+                                <img src="@(product.images?.FirstOrDefault()?.path ?? "/uploads/default.jpg")"
+                                     alt="@product.name"
+                                     class="product-thumbnail"
+                                     loading="lazy" />
                             </td>
                             <td>@product.name</td>
                             <td>@(product.description?.Length > 100 ? product.description.Substring(0, 97) + "..." : product.description)</td>

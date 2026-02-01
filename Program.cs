@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using testPortfolio.Controllers;
+using testPortfolio.Middleware;
 using testPortfolio.Services;
+
 namespace testPortfolio
 {
     public class Program
@@ -32,6 +34,32 @@ namespace testPortfolio
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            // Sécurité des cookies adaptée à l'environnement
+            var cookieSecurePolicy = builder.Environment.IsDevelopment()
+                ? CookieSecurePolicy.SameAsRequest  // HTTP autorisé en dev
+                : CookieSecurePolicy.Always;        // HTTPS obligatoire en prod
+
+            // Configuration sécurisée des cookies d'authentification
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = cookieSecurePolicy;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.SlidingExpiration = true;
+                options.LoginPath = "/Identity/Account/Login";
+                options.LogoutPath = "/Identity/Account/Logout";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            });
+
+            // Configuration des cookies anti-forgery
+            builder.Services.AddAntiforgery(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = cookieSecurePolicy;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+            });
+
             builder.Services.AddSingleton<ProductService>();
             builder.Services.AddSingleton<PictureService>();
 
@@ -43,12 +71,18 @@ namespace testPortfolio
             var app = builder.Build();
             app.MapRazorPages();
 
-            // Configure the HTTP request pipeline.  
+            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
+            // Gestion des pages d'erreur par code de statut (404, 500, etc.)
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+            // Security Headers (X-Content-Type-Options, X-Frame-Options, CSP, etc.)
+            app.UseSecurityHeaders();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

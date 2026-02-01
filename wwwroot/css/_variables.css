@@ -1,0 +1,197 @@
+/* ==========================================================================
+   Design System - CSS Custom Properties
+   ========================================================================== */
+
+:root {
+    /* ===== Colors - Primary ===== */
+    --color-primary: #2563eb;
+    --color-primary-hover: #1e40af;
+    --color-primary-light: #3b82f6;
+    --color-primary-bg: rgba(37, 99, 235, 0.1);
+
+    /* ===== Colors - Secondary ===== */
+    --color-secondary: #64748b;
+    --color-secondary-hover: #475569;
+
+    /* ===== Colors - Semantic ===== */
+    --color-success: #10b981;
+    --color-success-hover: #059669;
+    --color-danger: #dc3545;
+    --color-danger-hover: #bb2d3b;
+    --color-warning: #f59e0b;
+    --color-info: #06b6d4;
+
+    /* ===== Colors - Neutrals ===== */
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-text: #1e293b;
+    --color-text-muted: #64748b;
+    --color-text-light: #94a3b8;
+
+    /* ===== Colors - Backgrounds ===== */
+    --color-bg: #f4f4f4;
+    --color-bg-light: #f8fafc;
+    --color-bg-card: #ffffff;
+    --color-bg-hover: #f1f5f9;
+    --color-bg-overlay: rgba(0, 0, 0, 0.5);
+
+    /* ===== Colors - Borders ===== */
+    --color-border: #e2e8f0;
+    --color-border-light: #f1f5f9;
+    --color-border-dark: #cbd5e1;
+
+    /* ===== Typography ===== */
+    --font-family-base: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-family-heading: "Montserrat", var(--font-family-base);
+
+    --font-size-xs: 0.75rem;    /* 12px */
+    --font-size-sm: 0.875rem;   /* 14px */
+    --font-size-base: 1rem;     /* 16px */
+    --font-size-lg: 1.125rem;   /* 18px */
+    --font-size-xl: 1.25rem;    /* 20px */
+    --font-size-2xl: 1.5rem;    /* 24px */
+    --font-size-3xl: 1.875rem;  /* 30px */
+    --font-size-4xl: 2.25rem;   /* 36px */
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    --line-height-tight: 1.25;
+    --line-height-base: 1.6;
+    --line-height-relaxed: 1.75;
+
+    /* ===== Spacing ===== */
+    --spacing-0: 0;
+    --spacing-1: 0.25rem;   /* 4px */
+    --spacing-2: 0.5rem;    /* 8px */
+    --spacing-3: 0.75rem;   /* 12px */
+    --spacing-4: 1rem;      /* 16px */
+    --spacing-5: 1.25rem;   /* 20px */
+    --spacing-6: 1.5rem;    /* 24px */
+    --spacing-8: 2rem;      /* 32px */
+    --spacing-10: 2.5rem;   /* 40px */
+    --spacing-12: 3rem;     /* 48px */
+    --spacing-16: 4rem;     /* 64px */
+
+    /* ===== Border Radius ===== */
+    --radius-sm: 4px;
+    --radius-base: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    /* ===== Shadows ===== */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-base: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.15);
+    --shadow-card: 0 2px 8px rgba(30, 58, 138, 0.08);
+    --shadow-card-hover: 0 8px 24px rgba(30, 58, 138, 0.12);
+
+    /* ===== Transitions ===== */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    --transition-slower: 500ms ease;
+
+    /* ===== Z-Index ===== */
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-fixed: 300;
+    --z-modal-backdrop: 400;
+    --z-modal: 500;
+    --z-popover: 600;
+    --z-tooltip: 700;
+
+    /* ===== Focus ===== */
+    --focus-ring-color: rgba(37, 99, 235, 0.5);
+    --focus-ring-width: 3px;
+    --focus-ring-offset: 2px;
+
+    /* ===== Breakpoints (for reference in JS) ===== */
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+}
+
+/* ==========================================================================
+   Focus Styles - Accessibility
+   ========================================================================== */
+
+/* Remove default outline and add custom focus styles */
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+}
+
+/* Specific focus styles for interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--radius-sm);
+}
+
+/* Input focus enhancement */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--focus-ring-color);
+}
+
+/* Button focus */
+.btn:focus-visible {
+    box-shadow: 0 0 0 3px var(--focus-ring-color);
+}
+
+/* ==========================================================================
+   Skip Link - Accessibility
+   ========================================================================== */
+
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: var(--spacing-3) var(--spacing-6);
+    border-radius: var(--radius-base);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    z-index: var(--z-tooltip);
+    transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+    top: var(--spacing-4);
+}
+
+/* ==========================================================================
+   Reduced Motion - Accessibility
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

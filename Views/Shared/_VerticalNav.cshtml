@@ -1,33 +1,59 @@
-﻿<div class="col-md-2">  
-    <div class="row flex-nowrap">  
-        <div>  
-            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">  
-                <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">  
-                    <span class="fs-5 d-none d-sm-inline text-black">Menu</span>  
-                </a>  
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">  
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>  
-                    <li>  
-                        <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">  
-                            <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Product</span>  
-                        </a>  
-                        <ul class="collapse show nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">  
-                            <li class="w-100">  
-                                <a class="nav-link text-dark" asp-controller="BackOffice" asp-action="Index">Consulter les produits</a>
-                            </li>  
-                            <li>  
-                                <a class="nav-link text-dark" asp-controller="BackOffice" asp-action="ProductCreate">Créer un produit</a>
-                            </li>  
-                                                        <li>  
-                                <a class="nav-link text-dark" asp-controller="BackOffice" asp-action="EditProducts">Editer les produits</a>
-                            </li>  
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var isHomeIndex = currentController == "Home" && currentAction == "Index";
+    var isBackOfficeIndex = currentController == "BackOffice" && currentAction == "Index";
+    var isProductCreate = currentController == "BackOffice" && currentAction == "ProductCreate";
+    var isEditProducts = currentController == "BackOffice" && (currentAction == "EditProducts" || currentAction == "ProductEdit");
+}
 
-                        </ul>  
-                    </li>  
-                </ul> <!-- Added missing closing tag for the <ul> element -->  
-            </div>  
-        </div>  
-    </div>  
-</div>
+<nav class="col-md-2" aria-label="Navigation administration">
+    <div class="row flex-nowrap">
+        <div>
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100 bg-light">
+                <span class="fs-5 d-none d-sm-inline text-dark fw-semibold pb-3 mb-md-0">
+                    <i class="bi-gear me-2" aria-hidden="true"></i>Administration
+                </span>
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a class="nav-link @(isHomeIndex ? "active" : "text-dark")"
+                           asp-controller="Home" asp-action="Index" role="menuitem">
+                            <i class="bi-house me-2" aria-hidden="true"></i>Accueil
+                        </a>
+                    </li>
+                    <li role="none">
+                        <button class="nav-link px-0 align-middle text-dark bg-transparent border-0 w-100 text-start"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#submenu1"
+                                aria-expanded="true"
+                                aria-controls="submenu1">
+                            <i class="fs-5 bi-box me-2" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline">Produits</span>
+                        </button>
+                        <ul class="collapse show nav flex-column ms-3" id="submenu1" role="menu" aria-label="Sous-menu Produits">
+                            <li class="w-100" role="none">
+                                <a class="nav-link @(isBackOfficeIndex ? "active fw-semibold" : "text-dark")"
+                                   asp-controller="BackOffice" asp-action="Index" role="menuitem">
+                                    <i class="bi-list-ul me-2" aria-hidden="true"></i>Liste des produits
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a class="nav-link @(isProductCreate ? "active fw-semibold" : "text-dark")"
+                                   asp-controller="BackOffice" asp-action="ProductCreate" role="menuitem">
+                                    <i class="bi-plus-circle me-2" aria-hidden="true"></i>Créer un produit
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a class="nav-link @(isEditProducts ? "active fw-semibold" : "text-dark")"
+                                   asp-controller="BackOffice" asp-action="EditProducts" role="menuitem">
+                                    <i class="bi-pencil me-2" aria-hidden="true"></i>Éditer les produits
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

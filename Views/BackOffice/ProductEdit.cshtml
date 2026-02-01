@@ -14,67 +14,98 @@
 
                 <div class="row justify-content-center">
                     <div class="col-md-8">
-                        <form asp-action="Update" asp-controller="Product" method="post" enctype="multipart/form-data">
+                        <form asp-action="Update" asp-controller="Product" method="post" enctype="multipart/form-data"
+                              aria-label="Formulaire de modification de produit">
                             <input type="hidden" asp-for="Id" />
                             @Html.AntiForgeryToken()
-                            
+
                             <!-- Informations de base -->
-                            <h5 class="text-dark">Informations de base</h5>
-                            
-                            <div class="mb-3">
-                                <label asp-for="name" class="form-label">Nom du produit</label>
-                                <input asp-for="name" class="form-control" required />
-                            </div>
+                            <fieldset>
+                                <legend class="h5 text-dark">Informations de base</legend>
 
-                            <div class="mb-3">
-                                <label asp-for="description" class="form-label">Description</label>
-                                <textarea asp-for="description" class="form-control" rows="3" required></textarea>
-                            </div>
-
-                            <div class="mb-4">
-                                <label asp-for="price" class="form-label">Prix (€)</label>
-                                <div class="input-group">
-                                    <input asp-for="price" class="form-control" required />
-                                    <span class="input-group-text">€</span>
+                                <div class="mb-3">
+                                    <label asp-for="name" class="form-label">Nom du produit <span class="text-danger" aria-hidden="true">*</span></label>
+                                    <input asp-for="name" class="form-control"
+                                           aria-required="true"
+                                           aria-describedby="edit-name-validation"
+                                           required />
+                                    <span asp-validation-for="name" class="text-danger" id="edit-name-validation"></span>
                                 </div>
-                            </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="description" class="form-label">Description <span class="text-danger" aria-hidden="true">*</span></label>
+                                    <textarea asp-for="description" class="form-control" rows="3"
+                                              aria-required="true"
+                                              aria-describedby="edit-desc-validation"
+                                              required></textarea>
+                                    <span asp-validation-for="description" class="text-danger" id="edit-desc-validation"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="price" class="form-label">Prix (€) <span class="text-danger" aria-hidden="true">*</span></label>
+                                    <div class="input-group">
+                                        <input asp-for="price" class="form-control"
+                                               aria-required="true"
+                                               aria-describedby="edit-price-validation"
+                                               required />
+                                        <span class="input-group-text" aria-hidden="true">€</span>
+                                    </div>
+                                    <span asp-validation-for="price" class="text-danger" id="edit-price-validation"></span>
+                                </div>
+                            </fieldset>
 
                             <!-- Images existantes -->
-                            <h5 class="text-dark mb-2">Images actuelles</h5>
-                            <div class="mb-3">
-                                <div class="row g-2">
-                                    @if (Model.images != null && Model.images.Any())
-                                    {
-                                        var index = 0;
-                                        @foreach (var image in Model.images)
+                            <fieldset>
+                                <legend class="h5 text-dark mb-2">Images actuelles</legend>
+                                <div class="mb-3">
+                                    <div class="row g-2" role="list" aria-label="Liste des images du produit">
+                                        @if (Model.images != null && Model.images.Any())
                                         {
-                                            <div class="col-auto position-relative" data-image-index="@index">
-                                                <img src="@image.path" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: cover;" />
-                                                <button type="button"
-                                                        class="btn-close position-absolute top-0 end-0 bg-danger rounded-circle p-2"
-                                                        onclick="deleteImage(@Model.Id, @index)"
-                                                        style="transform: translate(25%, -25%);">
-                                                </button>
-                                            </div>
-                                            index++;
+                                            var index = 0;
+                                            @foreach (var image in Model.images)
+                                            {
+                                                <div class="col-auto position-relative" data-image-index="@index" role="listitem">
+                                                    <img src="@image.path"
+                                                         class="img-thumbnail"
+                                                         style="height: 100px; width: 100px; object-fit: cover;"
+                                                         alt="Image @(index + 1) du produit @Model.name"
+                                                         loading="lazy" />
+                                                    <button type="button"
+                                                            class="btn-close position-absolute top-0 end-0 bg-danger rounded-circle p-2"
+                                                            onclick="deleteImage(@Model.Id, @index)"
+                                                            aria-label="Supprimer l'image @(index + 1)"
+                                                            style="transform: translate(25%, -25%);">
+                                                    </button>
+                                                </div>
+                                                index++;
+                                            }
                                         }
-                                    }
+                                        else
+                                        {
+                                            <p class="text-muted">Aucune image pour ce produit.</p>
+                                        }
+                                    </div>
                                 </div>
-                            </div>
+                            </fieldset>
 
                             <!-- Ajouter de nouvelles images -->
-                            <h5 class="text-dark mb-2">Ajouter des images</h5>
-                            <div class="mb-4">
-                                <label class="form-label">Sélectionnez des images</label>
-                                <input type="file" 
-                                       class="form-control" 
-                                       name="images" 
-                                       multiple 
-                                       accept="image/*" />
-                                <div id="selectedFiles" class="mt-2">
-                                    <!-- Les fichiers sélectionnés seront affichés ici -->
+                            <fieldset>
+                                <legend class="h5 text-dark mb-2">Ajouter des images</legend>
+                                <div class="mb-4">
+                                    <label for="new-images" class="form-label">Sélectionnez des images</label>
+                                    <input type="file"
+                                           id="new-images"
+                                           class="form-control"
+                                           name="images"
+                                           multiple
+                                           accept="image/jpeg,image/png,image/gif,image/webp"
+                                           aria-describedby="new-images-help" />
+                                    <div id="new-images-help" class="form-text">Formats acceptés : JPEG, PNG, GIF, WebP. Taille max : 10 Mo par fichier.</div>
+                                    <div id="selectedFiles" class="mt-2" role="status" aria-live="polite">
+                                        <!-- Les fichiers sélectionnés seront affichés ici -->
+                                    </div>
                                 </div>
-                            </div>
+                            </fieldset>
 
                             <!-- Options de publication -->
                             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -85,8 +116,14 @@
                             </div>
 
                             <div class="d-flex gap-2 justify-content-end">
-                                <a asp-action="Index" class="btn btn-outline-secondary">Annuler</a>
-                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                <a asp-action="Index" class="btn btn-outline-secondary" id="cancelBtn">Annuler</a>
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
+                                    <span class="btn-text">Enregistrer</span>
+                                    <span class="btn-loading d-none">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Enregistrement...
+                                    </span>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -99,6 +136,7 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
+        // Affichage des fichiers sélectionnés
         document.querySelector('input[type="file"]').addEventListener('change', function(e) {
             const selectedFiles = document.getElementById('selectedFiles');
             selectedFiles.innerHTML = '';
@@ -108,17 +146,36 @@
                 const fileDiv = document.createElement('div');
                 fileDiv.className = 'alert alert-info mb-1 d-flex justify-content-between align-items-center';
                 const span = document.createElement('span');
-                span.textContent = file.name; // Protection XSS: utiliser textContent au lieu de innerHTML
+                span.textContent = file.name;
                 fileDiv.appendChild(span);
                 selectedFiles.appendChild(fileDiv);
             });
         });
 
+        // État de chargement lors de la soumission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+
+            if (this.checkValidity()) {
+                submitBtn.disabled = true;
+                cancelBtn.classList.add('disabled');
+                btnText.classList.add('d-none');
+                btnLoading.classList.remove('d-none');
+            }
+        });
+
+        // Suppression d'image
         function deleteImage(productId, pictureIndex) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
                 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const btn = event.target.closest('button');
 
-                // Envoyer le token via FormData pour la validation CSRF
+                // Désactiver le bouton pendant la suppression
+                if (btn) btn.disabled = true;
+
                 const formData = new FormData();
                 formData.append('__RequestVerificationToken', token);
                 formData.append('productId', productId);
@@ -132,17 +189,21 @@
                     if (response.ok) {
                         const imageElement = document.querySelector(`[data-image-index="${pictureIndex}"]`);
                         if (imageElement) {
-                            imageElement.remove();
+                            imageElement.style.transition = 'opacity 0.3s';
+                            imageElement.style.opacity = '0';
+                            setTimeout(() => imageElement.remove(), 300);
                         } else {
                             window.location.reload();
                         }
                     } else {
                         alert('Une erreur est survenue lors de la suppression de l\'image');
+                        if (btn) btn.disabled = false;
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
                     alert('Une erreur est survenue lors de la suppression de l\'image');
+                    if (btn) btn.disabled = false;
                 });
             }
         }

@@ -6,7 +6,7 @@ using testPortfolio.Services;
 
 namespace testPortfolio.Controllers
 {
-    public class ProductController : ControllerBase
+    public class ProductController : Controller
     {
         private readonly IWebHostEnvironment _environment;
         private readonly ProductService _productService;
@@ -86,6 +86,7 @@ namespace testPortfolio.Controllers
 
             await _productService.CreateAsync(product);
 
+            TempData["SuccessMessage"] = $"Le produit « {product.name} » a été créé avec succès.";
             return RedirectToAction(nameof(Index), "BackOffice");
         }
 
@@ -226,6 +227,7 @@ namespace testPortfolio.Controllers
                         }
                     }
                     await _productService.UpdateAsync(existingProduct);
+                    TempData["SuccessMessage"] = $"Le produit « {existingProduct.name} » a été mis à jour avec succès.";
                     return RedirectToAction(nameof(Index), "BackOffice");
                 }
                 catch (DbUpdateConcurrencyException)

@@ -14,43 +14,67 @@
 
                 <div class="row justify-content-center">
                     <div class="col-md-8">
-                        <form asp-action="Create" asp-controller="Product" method="post" enctype="multipart/form-data">
+                        <form asp-action="Create" asp-controller="Product" method="post" enctype="multipart/form-data"
+                              aria-label="Formulaire de création de produit">
                             @Html.AntiForgeryToken()
+
                             <!-- Informations de base -->
-                            <h5 class="text-dark">Informations de base</h5>
-                            
-                            <div class="mb-3">
-                                <label asp-for="name" class="form-label">Nom du produit</label>
-                                <input asp-for="name" class="form-control" required />
-                            </div>
+                            <fieldset>
+                                <legend class="h5 text-dark">Informations de base</legend>
 
-                            <div class="mb-3">
-                                <label asp-for="description" class="form-label">Description</label>
-                                <textarea asp-for="description" class="form-control" rows="3" required></textarea>
-                            </div>
-
-                            <div class="mb-4">
-                                <label asp-for="price" class="form-label">Prix (€)</label>
-                                <div class="input-group">
-                                    <input asp-for="price" class="form-control" required />
-                                    <span class="input-group-text">€</span>
+                                <div class="mb-3">
+                                    <label asp-for="name" class="form-label" id="name-label">Nom du produit <span class="text-danger" aria-hidden="true">*</span></label>
+                                    <input asp-for="name" class="form-control"
+                                           aria-required="true"
+                                           aria-describedby="name-help name-validation"
+                                           required />
+                                    <div id="name-help" class="form-text">Entrez un nom descriptif pour le produit</div>
+                                    <span asp-validation-for="name" class="text-danger" id="name-validation"></span>
                                 </div>
-                            </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="description" class="form-label" id="desc-label">Description <span class="text-danger" aria-hidden="true">*</span></label>
+                                    <textarea asp-for="description" class="form-control" rows="3"
+                                              aria-required="true"
+                                              aria-describedby="desc-help desc-validation"
+                                              required></textarea>
+                                    <div id="desc-help" class="form-text">Décrivez les caractéristiques principales du produit</div>
+                                    <span asp-validation-for="description" class="text-danger" id="desc-validation"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="price" class="form-label" id="price-label">Prix (€) <span class="text-danger" aria-hidden="true">*</span></label>
+                                    <div class="input-group">
+                                        <input asp-for="price" class="form-control"
+                                               aria-required="true"
+                                               aria-describedby="price-validation"
+                                               required />
+                                        <span class="input-group-text" aria-hidden="true">€</span>
+                                    </div>
+                                    <span asp-validation-for="price" class="text-danger" id="price-validation"></span>
+                                </div>
+                            </fieldset>
 
                             <!-- Images -->
-                            <h5 class="text-dark mb-2">Images</h5>
-                            <div class="mb-4">
-                                <label class="form-label">Sélectionnez des images</label>
-                                <input type="file" 
-                                       class="form-control" 
-                                       name="images" 
-                                       multiple 
-                                       accept="image/*" 
-                                       required />
-                                <div id="selectedFiles" class="mt-2">
-                                    <!-- Les fichiers sélectionnés seront affichés ici -->
+                            <fieldset>
+                                <legend class="h5 text-dark mb-2">Images</legend>
+                                <div class="mb-4">
+                                    <label for="images" class="form-label">Sélectionnez des images <span class="text-danger" aria-hidden="true">*</span></label>
+                                    <input type="file"
+                                           id="images"
+                                           class="form-control"
+                                           name="images"
+                                           multiple
+                                           accept="image/jpeg,image/png,image/gif,image/webp"
+                                           aria-required="true"
+                                           aria-describedby="images-help"
+                                           required />
+                                    <div id="images-help" class="form-text">Formats acceptés : JPEG, PNG, GIF, WebP. Taille max : 10 Mo par fichier.</div>
+                                    <div id="selectedFiles" class="mt-2" role="status" aria-live="polite">
+                                        <!-- Les fichiers sélectionnés seront affichés ici -->
+                                    </div>
                                 </div>
-                            </div>
+                            </fieldset>
 
                             <!-- Options de publication -->
                             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -61,8 +85,14 @@
                             </div>
 
                             <div class="d-flex gap-2 justify-content-end">
-                                <a asp-action="Index" class="btn btn-outline-secondary">Annuler</a>
-                                <button type="submit" class="btn btn-primary">Créer</button>
+                                <a asp-action="Index" class="btn btn-outline-secondary" id="cancelBtn">Annuler</a>
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
+                                    <span class="btn-text">Créer</span>
+                                    <span class="btn-loading d-none">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Création en cours...
+                                    </span>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -75,6 +105,7 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
+        // Affichage des fichiers sélectionnés
         document.querySelector('input[type="file"]').addEventListener('change', function(e) {
             const selectedFiles = document.getElementById('selectedFiles');
             selectedFiles.innerHTML = '';
@@ -84,10 +115,26 @@
                 const fileDiv = document.createElement('div');
                 fileDiv.className = 'alert alert-info mb-1 d-flex justify-content-between align-items-center';
                 const span = document.createElement('span');
-                span.textContent = file.name; // Protection XSS: utiliser textContent au lieu de innerHTML
+                span.textContent = file.name;
                 fileDiv.appendChild(span);
                 selectedFiles.appendChild(fileDiv);
             });
+        });
+
+        // État de chargement lors de la soumission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+
+            // Vérifier si le formulaire est valide
+            if (this.checkValidity()) {
+                submitBtn.disabled = true;
+                cancelBtn.classList.add('disabled');
+                btnText.classList.add('d-none');
+                btnLoading.classList.remove('d-none');
+            }
         });
     </script>
 }
